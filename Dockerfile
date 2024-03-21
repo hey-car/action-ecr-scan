@@ -16,6 +16,7 @@ ENV LOG_TIMESTAMPED "true"
 ENV DEBUG_MODE "false"
 
 COPY scripts/utils.sh .
+COPY scripts/gh-utils.sh .
 COPY scripts/script.sh .
 
 ENTRYPOINT ["/scripts/script.sh"]

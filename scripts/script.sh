@@ -1,25 +1,49 @@
 #!/usr/bin/env bash
+#!/usr/bin/env bash
 
-. "$(dirname "$0")/utils.sh"
+. "$(dirname "$0")/utils/script-utils.sh"
+. "$(dirname "$0")/utils/gh-utils.sh"
 
-# Your action logic goes here
+check_env_var "REPO_ORG"
+check_env_var "REPO_NAME"
+check_env_var "PR_NUMBER"
+check_env_var "AWS_ACCOUNT_ID"
+check_env_var "ECR_REPO_NAME"
+check_env_var "ECR_REPO_TAG"
+check_env_var "USE_ALPHA_REGISTRY"
 
-# TODO(user): Use this helper function to check if a required env variable is set or not
-check_env_var "SOME_INPUT"
+if [[ "$(check_bool "${USE_ALPHA_REGISTRY}")" ]]; then
+  _scan_repo_name="alpha-image/${ECR_REPO_NAME}"
+else
+  _scan_repo_name="image/${ECR_REPO_NAME}"
+fi
+_scan_repo_link="https://eu-central-1.console.aws.amazon.com/ecr/repositories/private/${AWS_ACCOUNT_ID}/${_scan_repo_name}"
 
-# TODO(user): Use the `check_bool` helper function to check for bool values
-if [[ "$(check_bool "true")" ]]; then
-  # TODO(user): Use the `log_out` helper function to log messages
-  log_out "hello world" "INFO"
-  # The following are some handy logging functions
-  log_debug "This is a DEBUG log"
-  log_info "This is a INFO log"
-  log_warning "This is a WARNING log"
-  log_error "This is a ERROR log"
-  log_fatal "This is a FATAL log"                         # <- This one exists with an error
-  log_fatal "This is a FATAL log with custom exit code" 5 # <- This one exists with an error
-  log_out "This is a custom log message that exits with code 10" "FATAL" 10
+log_info "Fetching scan results from ECR"
+log_debug "repo=\"${_scan_repo_name}\" | imageTag=\"${ECR_REPO_TAG}\""
+_scan_results="$(aws ecr describe-image-scan-findings --repository-name "${_scan_repo_name}" --image-id="imageTag=${ECR_REPO_TAG}" | jq '.imageScanFindings.findingSeverityCounts // {}')"
+
+_scan_results_comment=""
+if [[ "${_scan_results}" == "{}" ]]; then
+  log_info "Did not find any vulnerabilities on the ECR repo."
+  echo ":tada: Did not find any vulnerabilities in [${_scan_repo_name}](${_scan_repo_link}). Good job :+1:" >>"${_scan_results_comment}"
+else
+  log_info "Found vulnerabilities on ECR."
+  {
+    echo ":warning: Found the following number of vulnerabilities on [${_scan_repo_name}](${_scan_repo_link}):"
+    echo "- type \`CRITICAL\`: **$(echo "${_scan_results}" | jq '.CRITICAL // 0')**"
+    echo "- type \`HIGH\`: **$(echo "${_scan_results}" | jq '.HIGH // 0')**"
+    echo "- type \`MEDIUM\`: **$(echo "${_scan_results}" | jq '.MEDIUM // 0')**"
+    echo "- type \`LOW\`: **$(echo "${_scan_results}" | jq '.LOW // 0')**"
+    echo "- type \`UNDEFINED\`: **$(echo "${_scan_results}" | jq '.UNDEFINED // 0')**"
+    echo "- type \`INFORMATIONAL\`: **$(echo "${_scan_results}" | jq '.INFORMATIONAL // 0')**"
+  } >>"${_scan_results_comment}"
 fi
 
-# TODO(user): This is how to output something to GH actions
-echo "some-output=HelloThereGeneralKenobi" >>"${GITHUB_OUTPUT}"
+comment_on_pull_request "${REPO_ORG}" \
+  "${REPO_NAME}" \
+  "${PR_NUMBER}" \
+  "${_scan_results_comment}" \
+  "true" \
+  "scan-results:${_scan_repo_name}"
+  
