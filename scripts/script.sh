@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#!/usr/bin/env bash
 
 . "$(dirname "$0")/utils/script-utils.sh"
 . "$(dirname "$0")/utils/gh-utils.sh"
