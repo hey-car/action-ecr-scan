@@ -18,15 +18,6 @@ inputs:
     description: Set to true in order to enable timestamps on log messages
     required: false
     default: 'true'
-  repo-org:
-    description: Github Org to use for PR comment
-    required: true
-  repo-name:
-    description: Github Repo Name to use for PR comment
-    required: true
-  pr-number:
-    description: PR number to be used for PR comment
-    required: true
   aws-account-id:
     description: AWS account ID to use for ECR repo
     required: true
@@ -39,17 +30,7 @@ inputs:
   use-alpha:
     description: AWS ECR Repo Alpha image
     required: true
-    default: 'false'
-
-
-# TODO(user): Define your outputs here
-outputs:
-  some-output:
-    description: 'Some output description'
-  some-output:
-    description: 'Some output description'
-  some-output:
-    description: 'Some output description'
+    default: 'true'
 
 runs:
   using: 'docker'
@@ -58,9 +39,6 @@ runs:
     DEBUG_MODE: ${{ inputs.debug-mode }}
     LOG_LEVEL: ${{ inputs.log-level }}
     LOG_TIMESTAMPED: ${{ inputs.log-timestamped }}
-    REPO_ORG: ${{ inputs.repo-org }}
-    REPO_NAME: ${{ inputs.repo-name }}
-    PR_NUMBER: ${{ inputs.pr-number }}
     AWS_ACCOUNT_ID: ${{ inputs.aws-account-id }}
     ECR_REPO_NAME: ${{ inputs.ecr-repo-name }}
     ECR_REPO_TAG: ${{ inputs.ecr-repo-tag }}

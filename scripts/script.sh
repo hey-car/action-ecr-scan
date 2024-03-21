@@ -4,9 +4,9 @@
 . "$(dirname "$0")/utils/script-utils.sh"
 . "$(dirname "$0")/utils/gh-utils.sh"
 
-check_env_var "REPO_ORG"
-check_env_var "REPO_NAME"
-check_env_var "PR_NUMBER"
+REPO_ORG=${GITHUB_REPOSITORY_OWNER}
+REPO_NAME=$(echo "${GITHUB_REPOSITORY}" |cut -d "/" -f2)
+PR_NUMBER=${GITHUB_SHA}
 check_env_var "AWS_ACCOUNT_ID"
 check_env_var "ECR_REPO_NAME"
 check_env_var "ECR_REPO_TAG"
