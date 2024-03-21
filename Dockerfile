@@ -1,14 +1,15 @@
 ARG ALPINE_VERSION="3.19"
 
-ARG BASH_VERSION="5.2.26-r0"
-
 FROM alpine:${ALPINE_VERSION}
+
+ARG BASH_VERSION="5"
+ARG AWS_CLI_VERSION="2"
 
 WORKDIR /scripts
 
 RUN apk update --no-cache; \
     apk upgrade --no-cache; \
-    apk add --no-cache bash=${BASH_VERSION}; \
+    apk add --no-cache bash~=${BASH_VERSION} aws-cli~=${AWS_CLI_VERSION} jq curl; \
     rm -rf /var/cache/apk/*
 
 ENV LOG_LEVEL "INFO"
