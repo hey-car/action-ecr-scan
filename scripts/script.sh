@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 . "$(dirname "$0")/utils.sh"
-. "$(dirname "$0")gh-utils.sh"
+. "$(dirname "$0")/gh-utils.sh"
 
 REPO_ORG=${GITHUB_REPOSITORY_OWNER}
 REPO_NAME=$(echo "${GITHUB_REPOSITORY}" |cut -d "/" -f2)

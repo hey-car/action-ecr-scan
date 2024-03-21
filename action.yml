@@ -29,7 +29,7 @@ inputs:
     required: true
   use-alpha:
     description: AWS ECR Repo Alpha image
-    required: true
+    required: false
     default: 'true'
 
 runs:
