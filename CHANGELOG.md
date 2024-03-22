@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [1.0.3](https://github.com/hey-car/action-ecr-scan/compare/v1.0.2...v1.0.3) (2024-03-22)
+
+
+### Bug Fixes
+
+* added missing pr number input ([#4](https://github.com/hey-car/action-ecr-scan/issues/4)) ([d2f1486](https://github.com/hey-car/action-ecr-scan/commit/d2f1486cd8db047a07dd908bda6dcd1318f8ae35))
+
 ### [1.0.2](https://github.com/hey-car/action-ecr-scan/compare/v1.0.1...v1.0.2) (2024-03-22)
 
 
