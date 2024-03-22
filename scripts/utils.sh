@@ -52,8 +52,8 @@ function log_out() {
   _exitCode="${3}"
 
   for _lvl in "${availableLogLevels[@]}"; do
-    [[ "${_lvl}" == "${_level}" && "$(check_bool "${LOG_TIMESTAMPED}")" ]] && echo -e "[$(date +"%FT%T%Z") | ${_level^^}] ${_message}"
-    [[ "${_lvl}" == "${_level}" && -z "$(check_bool "${LOG_TIMESTAMPED}")" ]] && echo -e "[${_level^^}] ${_message}"
+    [[ "${_lvl,,}" == "${_level,,}" && "$(check_bool "${LOG_TIMESTAMPED}")" ]] && echo -e "[$(date +"%FT%T%Z") | ${_level^^}] ${_message}"
+    [[ "${_lvl,,}" == "${_level,,}" && -z "$(check_bool "${LOG_TIMESTAMPED}")" ]] && echo -e "[${_level^^}] ${_message}"
   done
 
   [[ -z "${_exitCode}" ]] || exit "${_exitCode}"
