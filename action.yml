@@ -31,6 +31,9 @@ inputs:
     description: AWS ECR Repo Alpha image
     required: false
     default: 'true'
+  pr-number:
+    description: The current pull request number
+    required: true
 
 runs:
   using: 'docker'
@@ -43,3 +46,4 @@ runs:
     ECR_REPO_NAME: ${{ inputs.ecr-repo-name }}
     ECR_REPO_TAG: ${{ inputs.ecr-repo-tag }}
     USE_ALPHA_REGISTRY: ${{ inputs.use-alpha }}
+    PR_NUMBER: ${{ inputs.pr-number }}
