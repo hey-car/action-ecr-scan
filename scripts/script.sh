@@ -23,19 +23,21 @@ log_info "Fetching scan results from ECR"
 log_debug "repo=\"${_scan_repo_name}\" | imageTag=\"${ECR_REPO_TAG}\""
 _scan_results="$(aws ecr describe-image-scan-findings --repository-name "${_scan_repo_name}" --image-id="imageTag=${ECR_REPO_TAG}" | jq '.imageScanFindings.findingSeverityCounts // {}')"
 
-_scan_results_comment=""
+_scan_results_comment="./.tmp.scan-results.txt"
 if [[ "${_scan_results}" == "{}" ]]; then
   log_info "Did not find any vulnerabilities on the ECR repo."
-  _scan_results_comment=":tada: Did not find any vulnerabilities in [${_scan_repo_name}](${_scan_repo_link}). Good job :+1:"
+  echo ":tada: Did not find any vulnerabilities in [${_scan_repo_name}](${_scan_repo_link}). Good job :+1:" >>"${_scan_results_comment}"
 else
   log_info "Found vulnerabilities on ECR."
-  _scan_results_comment="${_scan_results_comment}\n:warning: Found the following number of vulnerabilities on [${_scan_repo_name}](${_scan_repo_link}):"
-  _scan_results_comment="${_scan_results_comment}\n- type \`CRITICAL\`: **$(echo "${_scan_results}" | jq '.CRITICAL // 0')**"
-  _scan_results_comment="${_scan_results_comment}\n- type \`HIGH\`: **$(echo "${_scan_results}" | jq '.HIGH // 0')**"
-  _scan_results_comment="${_scan_results_comment}\n- type \`MEDIUM\`: **$(echo "${_scan_results}" | jq '.MEDIUM // 0')**"
-  _scan_results_comment="${_scan_results_comment}\n- type \`LOW\`: **$(echo "${_scan_results}" | jq '.LOW // 0')**"
-  _scan_results_comment="${_scan_results_comment}\n- type \`UNDEFINED\`: **$(echo "${_scan_results}" | jq '.UNDEFINED // 0')**"
-  _scan_results_comment="${_scan_results_comment}\n- type \`INFORMATIONAL\`: **$(echo "${_scan_results}" | jq '.INFORMATIONAL // 0')**"
+  {
+    echo ":warning: Found the following number of vulnerabilities on [${_scan_repo_name}](${_scan_repo_link}):"
+    echo "- type \`CRITICAL\`: **$(echo "${_scan_results}" | jq '.CRITICAL // 0')**"
+    echo "- type \`HIGH\`: **$(echo "${_scan_results}" | jq '.HIGH // 0')**"
+    echo "- type \`MEDIUM\`: **$(echo "${_scan_results}" | jq '.MEDIUM // 0')**"
+    echo "- type \`LOW\`: **$(echo "${_scan_results}" | jq '.LOW // 0')**"
+    echo "- type \`UNDEFINED\`: **$(echo "${_scan_results}" | jq '.UNDEFINED // 0')**"
+    echo "- type \`INFORMATIONAL\`: **$(echo "${_scan_results}" | jq '.INFORMATIONAL // 0')**"
+  } >>"${_scan_results_comment}"
 fi
 
 comment_on_pull_request "${REPO_ORG}" \
@@ -44,3 +46,5 @@ comment_on_pull_request "${REPO_ORG}" \
   "${_scan_results_comment}" \
   "true" \
   "scan-results:${_scan_repo_name}"
+
+rm "${_scan_results_comment}"
