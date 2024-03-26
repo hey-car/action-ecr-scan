@@ -1,6 +1,6 @@
-ARG BASE_RUNNER_IMAGE_VERSION="1.2.0"
+ARG BASE_RUNNER_IMAGE_VERSION="1.3.0"
 
-FROM ghcr.io/hey-car/infra-docker-actions:${BASE_RUNNER_IMAGE_VERSION}
+FROM heycardocker/infra-docker-actions:${BASE_RUNNER_IMAGE_VERSION}
 
 WORKDIR /scripts
 
