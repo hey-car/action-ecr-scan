@@ -3,8 +3,6 @@
 . "$(dirname "$0")/utils.sh"
 . "$(dirname "$0")/gh-utils.sh"
 
-sleep 15
-
 function get_scans() {
   _scan_repo_name="${1}"
   _scan_count="${2:-0}"
