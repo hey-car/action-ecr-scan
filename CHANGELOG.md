@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [1.0.6](https://github.com/hey-car/action-ecr-scan/compare/v1.0.5...v1.0.6) (2024-03-27)
+
+
+### Bug Fixes
+
+* changed base docker image to use pre-built base ([#7](https://github.com/hey-car/action-ecr-scan/issues/7)) ([a293444](https://github.com/hey-car/action-ecr-scan/commit/a293444eacce718571a3ffcee49dea62d9aceb02))
+
 ### [1.0.5](https://github.com/hey-car/action-ecr-scan/compare/v1.0.4...v1.0.5) (2024-03-22)
 
 
