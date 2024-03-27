@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0](https://github.com/hey-car/action-ecr-scan/compare/v1.0.6...v1.1.0) (2024-03-27)
+
+
+### Features
+
+* transformed ecr scan action to composite ([#8](https://github.com/hey-car/action-ecr-scan/issues/8)) ([e524dc0](https://github.com/hey-car/action-ecr-scan/commit/e524dc069cc03ac5a96ae2bbc3c4917a3bd3ba26))
+
 ### [1.0.6](https://github.com/hey-car/action-ecr-scan/compare/v1.0.5...v1.0.6) (2024-03-27)
 
 
