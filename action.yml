@@ -18,6 +18,9 @@ inputs:
     description: Set to true in order to enable timestamps on log messages
     required: false
     default: 'true'
+  aws-region:
+    description: AWS region to run in
+    required: true
   aws-account-id:
     description: AWS account ID to use for ECR repo
     required: true
@@ -43,6 +46,7 @@ runs:
     LOG_LEVEL: ${{ inputs.log-level }}
     LOG_TIMESTAMPED: ${{ inputs.log-timestamped }}
     AWS_ACCOUNT_ID: ${{ inputs.aws-account-id }}
+    AWS_REGION: ${{ inputs.aws-region }}
     ECR_REPO_NAME: ${{ inputs.ecr-repo-name }}
     ECR_REPO_TAG: ${{ inputs.ecr-repo-tag }}
     USE_ALPHA_REGISTRY: ${{ inputs.use-alpha }}

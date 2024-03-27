@@ -7,6 +7,7 @@ REPO_ORG=${GITHUB_REPOSITORY_OWNER}
 REPO_NAME=$(echo "${GITHUB_REPOSITORY}" | cut -d "/" -f2)
 
 check_env_var "AWS_ACCOUNT_ID"
+check_env_var "AWS_REGION"
 check_env_var "ECR_REPO_NAME"
 check_env_var "ECR_REPO_TAG"
 check_env_var "PR_NUMBER"
@@ -21,7 +22,7 @@ _scan_repo_link="https://eu-central-1.console.aws.amazon.com/ecr/repositories/pr
 
 log_info "Fetching scan results from ECR"
 log_debug "repo=\"${_scan_repo_name}\" | imageTag=\"${ECR_REPO_TAG}\""
-_scan_results="$(aws ecr describe-image-scan-findings --repository-name "${_scan_repo_name}" --image-id="imageTag=${ECR_REPO_TAG}" | jq '.imageScanFindings.findingSeverityCounts // {}')"
+_scan_results="$(aws --region "${AWS_REGION}" ecr describe-image-scan-findings --repository-name "${_scan_repo_name}" --image-id="imageTag=${ECR_REPO_TAG}" | jq '.imageScanFindings.findingSeverityCounts // {}')"
 
 _scan_results_comment="./.tmp.scan-results.txt"
 if [[ "${_scan_results}" == "{}" ]]; then
