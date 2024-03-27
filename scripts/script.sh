@@ -3,6 +3,25 @@
 . "$(dirname "$0")/utils.sh"
 . "$(dirname "$0")/gh-utils.sh"
 
+sleep 15
+
+function get_scans() {
+  _scan_repo_name="${1}"
+  _scan_count="${2:-0}"
+
+  if [[ $_scan_count -ge 3 ]]; then
+    log_fatal "Scan took toolong. Aborting."
+  fi
+
+  _scan_results_tmp="$(aws --region "${AWS_REGION}" ecr describe-image-scan-findings --repository-name "${_scan_repo_name}" --image-id="imageTag=${ECR_REPO_TAG}")"
+  if [[ "$(echo "${_scan_results_tmp}" | jq '.imageScanStatus.status')" == "IN_PROGRESS" ]]; then
+    sleep 15
+    get_scans "${_scan_repo_name}" $((_scan_count + 1))
+  else
+    echo "${_scan_results_tmp}" | jq '.imageScanFindings.findingSeverityCounts // {}'
+  fi
+}
+
 REPO_ORG=${GITHUB_REPOSITORY_OWNER}
 REPO_NAME=$(echo "${GITHUB_REPOSITORY}" | cut -d "/" -f2)
 
@@ -23,10 +42,7 @@ _scan_repo_link="https://eu-central-1.console.aws.amazon.com/ecr/repositories/pr
 log_info "Fetching scan results from ECR"
 log_debug "repo=\"${_scan_repo_name}\" | imageTag=\"${ECR_REPO_TAG}\""
 
-# TODO: tidy his BS
-_scan_results_tmp="$(aws --region "${AWS_REGION}" ecr describe-image-scan-findings --repository-name "${_scan_repo_name}" --image-id="imageTag=${ECR_REPO_TAG}")"
-echo "_scan_results: ${_scan_results_tmp}"
-_scan_results="$(echo "${_scan_results_tmp}"  | jq '.imageScanFindings.findingSeverityCounts // {}')"
+_scan_results="$(get_scans "${_scan_repo_name}")"
 
 _scan_results_comment="./.tmp.scan-results.txt"
 if [[ "${_scan_results}" == "{}" ]]; then
@@ -55,5 +71,5 @@ comment_on_pull_request "${REPO_ORG}" \
 rm "${_scan_results_comment}"
 
 if [[ "$(echo "${_scan_results}" | jq '.CRITICAL // 0')" != 0 ]]; then
-    log_fatal "Please fix critical vulnerabilities"
+  log_fatal "Please fix critical vulnerabilities"
 fi
