@@ -39,15 +39,25 @@ inputs:
     required: true
 
 runs:
-  using: 'docker'
-  image: Dockerfile
-  env:
-    DEBUG_MODE: ${{ inputs.debug-mode }}
-    LOG_LEVEL: ${{ inputs.log-level }}
-    LOG_TIMESTAMPED: ${{ inputs.log-timestamped }}
-    AWS_ACCOUNT_ID: ${{ inputs.aws-account-id }}
-    AWS_REGION: ${{ inputs.aws-region }}
-    ECR_REPO_NAME: ${{ inputs.ecr-repo-name }}
-    ECR_REPO_TAG: ${{ inputs.ecr-repo-tag }}
-    USE_ALPHA_REGISTRY: ${{ inputs.use-alpha }}
-    PR_NUMBER: ${{ inputs.pr-number }}
+  using: 'composite'
+  steps:
+    - name: setup
+      if: github.event_name == 'pull_request'
+      shell: bash
+      id: setup
+      run: |
+        echo "scripts-path=${GITHUB_ACTION_PATH}" >>"${GITHUB_OUTPUT}"
+    - name: Scan ECR
+      if: github.event_name == 'pull_request'
+      run: '${{ steps.setup.outputs.scripts-path }}/scripts/script.sh'
+      shell: bash
+      env:
+        DEBUG_MODE: ${{ inputs.debug-mode }}
+        LOG_LEVEL: ${{ inputs.log-level }}
+        LOG_TIMESTAMPED: ${{ inputs.log-timestamped }}
+        AWS_ACCOUNT_ID: ${{ inputs.aws-account-id }}
+        AWS_REGION: ${{ inputs.aws-region }}
+        ECR_REPO_NAME: ${{ inputs.ecr-repo-name }}
+        ECR_REPO_TAG: ${{ inputs.ecr-repo-tag }}
+        USE_ALPHA_REGISTRY: ${{ inputs.use-alpha }}
+        PR_NUMBER: ${{ inputs.pr-number }}
