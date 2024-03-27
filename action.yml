@@ -18,6 +18,12 @@ inputs:
     description: Set to true in order to enable timestamps on log messages
     required: false
     default: 'true'
+  role-to-assume:
+    required: true
+    description: 'aws role-to-assume to configure'
+  role-session-name:
+    required: true
+    description: 'aws role-session-name to configure'
   aws-region:
     description: AWS region to run in
     required: true
@@ -39,15 +45,32 @@ inputs:
     required: true
 
 runs:
-  using: 'docker'
-  image: Dockerfile
-  env:
-    DEBUG_MODE: ${{ inputs.debug-mode }}
-    LOG_LEVEL: ${{ inputs.log-level }}
-    LOG_TIMESTAMPED: ${{ inputs.log-timestamped }}
-    AWS_ACCOUNT_ID: ${{ inputs.aws-account-id }}
-    AWS_REGION: ${{ inputs.aws-region }}
-    ECR_REPO_NAME: ${{ inputs.ecr-repo-name }}
-    ECR_REPO_TAG: ${{ inputs.ecr-repo-tag }}
-    USE_ALPHA_REGISTRY: ${{ inputs.use-alpha }}
-    PR_NUMBER: ${{ inputs.pr-number }}
+  using: 'composite'
+  steps:
+    - name: setup
+      if: github.event_name == 'pull_request'
+      shell: bash
+      id: setup
+      run: |
+        echo "scripts-path=${GITHUB_ACTION_PATH}" >>"${GITHUB_OUTPUT}"
+    - name: Configure AWS credentials
+      if: github.event_name == 'pull_request'
+      uses: aws-actions/configure-aws-credentials@v4.0.2
+      with:
+        role-to-assume: ${{ inputs.role-to-assume }}
+        role-session-name: ${{ inputs.role-session-name }}
+        aws-region: ${{ inputs.aws-region }}
+    - name: Scan ECR
+      if: github.event_name == 'pull_request'
+      run: '${{ steps.setup.outputs.scripts-path }}/scripts/script.sh'
+      shell: bash
+      env:
+        DEBUG_MODE: ${{ inputs.debug-mode }}
+        LOG_LEVEL: ${{ inputs.log-level }}
+        LOG_TIMESTAMPED: ${{ inputs.log-timestamped }}
+        AWS_ACCOUNT_ID: ${{ inputs.aws-account-id }}
+        AWS_REGION: ${{ inputs.aws-region }}
+        ECR_REPO_NAME: ${{ inputs.ecr-repo-name }}
+        ECR_REPO_TAG: ${{ inputs.ecr-repo-tag }}
+        USE_ALPHA_REGISTRY: ${{ inputs.use-alpha }}
+        PR_NUMBER: ${{ inputs.pr-number }}
