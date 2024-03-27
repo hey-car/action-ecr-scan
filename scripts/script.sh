@@ -22,7 +22,11 @@ _scan_repo_link="https://eu-central-1.console.aws.amazon.com/ecr/repositories/pr
 
 log_info "Fetching scan results from ECR"
 log_debug "repo=\"${_scan_repo_name}\" | imageTag=\"${ECR_REPO_TAG}\""
-_scan_results="$(aws --region "${AWS_REGION}" ecr describe-image-scan-findings --repository-name "${_scan_repo_name}" --image-id="imageTag=${ECR_REPO_TAG}" | jq '.imageScanFindings.findingSeverityCounts // {}')"
+
+# TODO: tidy his BS
+_scan_results_tmp="$(aws --region "${AWS_REGION}" ecr describe-image-scan-findings --repository-name "${_scan_repo_name}" --image-id="imageTag=${ECR_REPO_TAG}")"
+echo "_scan_results: ${_scan_results_tmp}"
+_scan_results="$(echo "${_scan_results_tmp}"  | jq '.imageScanFindings.findingSeverityCounts // {}')"
 
 _scan_results_comment="./.tmp.scan-results.txt"
 if [[ "${_scan_results}" == "{}" ]]; then
@@ -49,3 +53,7 @@ comment_on_pull_request "${REPO_ORG}" \
   "scan-results:${_scan_repo_name}"
 
 rm "${_scan_results_comment}"
+
+if [[ "$(echo "${_scan_results}" | jq '.CRITICAL // 0')" != 0 ]]; then
+    log_fatal "Please fix critical vulnerabilities"
+fi
