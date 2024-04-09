@@ -1,3 +1,3 @@
-# actions-template
+# action-ecr-scan
 
-Template repo for github actions
+This action scans the ECR scan result and reports results back to PR
