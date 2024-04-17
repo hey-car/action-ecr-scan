@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0](https://github.com/hey-car/action-ecr-scan/compare/v1.1.1...v1.2.0) (2024-04-17)
+
+
+### Features
+
+* **TECH:** major version tag ([#10](https://github.com/hey-car/action-ecr-scan/issues/10)) ([188700d](https://github.com/hey-car/action-ecr-scan/commit/188700d2c3a39f0441e6e9363976989bd9efbce9))
+
 ### [1.1.1](https://github.com/hey-car/action-ecr-scan/compare/v1.1.0...v1.1.1) (2024-04-11)
 
 
