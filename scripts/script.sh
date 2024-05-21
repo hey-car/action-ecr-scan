@@ -35,7 +35,7 @@ if [[ "$(check_bool "${USE_ALPHA_REGISTRY}")" ]]; then
 else
   _scan_repo_name="image/${ECR_REPO_NAME}"
 fi
-_scan_repo_link="https://eu-central-1.console.aws.amazon.com/ecr/repositories/private/${AWS_ACCOUNT_ID}/${_scan_repo_name}"
+_scan_repo_link="https://heycargroup.awsapps.com/start/#/console?account_id=${AWS_ACCOUNT_ID}&role_name=Developer&destination=https%3A%2F%2Feu-central-1.console.aws.amazon.com%2Fecr%2Frepositories%2Fprivate%2F${AWS_ACCOUNT_ID}%2F${_scan_repo_name}%3Fregion%3Deu-central-1"
 
 log_info "Fetching scan results from ECR"
 log_debug "repo=\"${_scan_repo_name}\" | imageTag=\"${ECR_REPO_TAG}\""
