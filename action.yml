@@ -43,6 +43,12 @@ inputs:
   pr-number:
     description: The current pull request number
     required: true
+  sso-prefix:
+    description: The prefix for the SSO account
+    required: true
+  sso-role:
+    description: The role to assume in the SSO account
+    required: true
 
 runs:
   using: 'composite'
@@ -74,3 +80,5 @@ runs:
         ECR_REPO_TAG: ${{ inputs.ecr-repo-tag }}
         USE_ALPHA_REGISTRY: ${{ inputs.use-alpha }}
         PR_NUMBER: ${{ inputs.pr-number }}
+        SSO_PREFIX: ${{ inputs.sso-prefix }}
+        SSO_ROLE: ${{ inputs.sso-role }}

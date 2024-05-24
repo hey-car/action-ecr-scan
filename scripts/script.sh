@@ -29,13 +29,17 @@ check_env_var "ECR_REPO_NAME"
 check_env_var "ECR_REPO_TAG"
 check_env_var "PR_NUMBER"
 check_env_var "USE_ALPHA_REGISTRY"
+check_env_var "SSO_PREFIX"
+check_env_var "SSO_ROLE"
 
 if [[ "$(check_bool "${USE_ALPHA_REGISTRY}")" ]]; then
   _scan_repo_name="alpha-image/${ECR_REPO_NAME}"
 else
   _scan_repo_name="image/${ECR_REPO_NAME}"
 fi
-_scan_repo_link="https://eu-central-1.console.aws.amazon.com/ecr/repositories/private/${AWS_ACCOUNT_ID}/${_scan_repo_name}"
+
+_image_digest=$(aws --region "${AWS_REGION}" ecr describe-images --repository-name "${_scan_repo_name}" --image-ids imageTag="${ECR_REPO_TAG}" --query 'imageDetails[].imageDigest' --output text)
+_scan_repo_link="https://${SSO_PREFIX}.awsapps.com/start/#/console?account_id=${AWS_ACCOUNT_ID}&role_name=${SSO_ROLE}&destination=https%3A%2F%2F${AWS_REGION}.console.aws.amazon.com%2Fecr%2Frepositories%2Fprivate%2F${AWS_ACCOUNT_ID}%2F${_scan_repo_name}%2F_%2Fimage%2F${_image_digest}%2Fdetails%3Fregion%3D${AWS_REGION}"
 
 log_info "Fetching scan results from ECR"
 log_debug "repo=\"${_scan_repo_name}\" | imageTag=\"${ECR_REPO_TAG}\""
