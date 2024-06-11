@@ -38,7 +38,9 @@ else
   _scan_repo_name="image/${ECR_REPO_NAME}"
 fi
 
+# Get the image digest
 _image_digest=$(aws --region "${AWS_REGION}" ecr describe-images --repository-name "${_scan_repo_name}" --image-ids imageTag="${ECR_REPO_TAG}" --query 'imageDetails[].imageDigest' --output text)
+# Get the image scan link
 _scan_repo_link="https://${SSO_PREFIX}.awsapps.com/start/#/console?account_id=${AWS_ACCOUNT_ID}&role_name=${SSO_ROLE}&destination=https%3A%2F%2F${AWS_REGION}.console.aws.amazon.com%2Fecr%2Frepositories%2Fprivate%2F${AWS_ACCOUNT_ID}%2F${_scan_repo_name}%2F_%2Fimage%2F${_image_digest}%2Fdetails%3Fregion%3D${AWS_REGION}"
 
 log_info "Fetching scan results from ECR"
