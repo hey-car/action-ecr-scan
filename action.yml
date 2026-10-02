@@ -61,7 +61,7 @@ runs:
         echo "scripts-path=${GITHUB_ACTION_PATH}" >>"${GITHUB_OUTPUT}"
     - name: Configure AWS credentials
       if: github.event_name == 'pull_request'
-      uses: aws-actions/configure-aws-credentials@v4.0.2
+      uses: aws-actions/configure-aws-credentials@v6.2.4
       with:
         role-to-assume: ${{ inputs.role-to-assume }}
         role-session-name: ${{ inputs.role-session-name }}
