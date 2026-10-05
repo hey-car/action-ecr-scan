@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [1.2.2](https://github.com/hey-car/action-ecr-scan/compare/v1.2.1...v1.2.2) (2026-10-05)
+
+
+### Bug Fixes
+
+* update hey-car/action-ecr-scan to v6 for node24 ([#14](https://github.com/hey-car/action-ecr-scan/issues/14)) ([8a5e4e3](https://github.com/hey-car/action-ecr-scan/commit/8a5e4e3b65145b7246bdc9dec33ee61f6fe2f359))
+
 ### [1.2.1](https://github.com/hey-car/action-ecr-scan/compare/v1.2.0...v1.2.1) (2024-06-11)
 
 
